@@ -21,7 +21,11 @@ class state(object):
 				return 1
 			elif line == [-1,-1,-1]:
 				return -1
-		return 0					
+		
+		if 0 in self.v:
+			return None 
+		else:
+			return 0 #no more moves
 
 	def expand(self):
 		ret = []
@@ -47,9 +51,9 @@ g2 = ('0  '
 	  ' 00'
 	  'x 0')
 
-g3 = ('xx '
+g3 = ('xo '
 	  ' oo'
-	  ' x ')
+	  ' xx')
 
 g4 = ('x 0'
 	  'xx '
@@ -58,25 +62,23 @@ g4 = ('x 0'
 def test1():		
 	assert state(g1).goal() == 1
 	assert state(g2).goal() == -1
-	assert state(g3).goal() == 0
+	assert state(g3).goal() == None
 	assert len(state(g1).expand()) == 3
 
-def search_min(state):			
-	print state
-	isgoal = state.goal()
-	if isgoal:
-		return (isgoal, None)
+def search_min(state):				
+	goal = state.goal()
+	if goal is not None:
+		return (goal, None)
 	else:		
 		children = state.expand()
 		scores = [search_max(c)[0] for c in children]
 		children_score = zip(scores, children)
 		return min(children_score, key=lambda x:x[0])		
 
-def search_max(state):
-	print state
-	isgoal = state.goal()
-	if isgoal:
-		return (isgoal, None)
+def search_max(state):	
+	goal = state.goal()
+	if goal is not None:
+		return (goal, None)
 	else:		
 		children = state.expand()
 		scores = [search_min(c)[0] for c in children]
@@ -84,8 +86,15 @@ def search_max(state):
 		return max(children_score, key=lambda x:x[0])
 
 def test2():
-	st = state(g3,-1)	
-	print search_min(st)
+	st = state(g3,1)		
+	g, nst = search_max(st)
+	assert g == 1
+	assert nst.v[6] == 1
+
+	st = state(g3, -1)	
+	g, nst = search_min(st)
+	assert g == -1	
+	assert nst.v[3] == -1
 
 if __name__ == '__main__':
 	test1()

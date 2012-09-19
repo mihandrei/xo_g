@@ -1,7 +1,7 @@
 class state(object):		
 	def __init__(self, gamestr=None, tomove = 1):					
 		d = {'x': 1, '*':1, 'o': -1 , '0':-1, ' ':0, '_' :0}
-		self.tomove=tomove						
+		self.tomove = tomove						
 		
 		if gamestr is None:
 			self.v = [0]*9

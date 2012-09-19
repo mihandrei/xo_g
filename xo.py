@@ -96,6 +96,25 @@ def test2():
 	assert g == -1	
 	assert nst.v[3] == -1
 
+def ai_play():
+	def readmove():
+		m = input()
+		return m
+
+	st = state()
+
+	while st.goal() is None:
+		m = readmove()
+		st.v[m] = 1
+		st.tomove = -st.tomove
+		print st
+		g, st = search_min(st)
+		print st
+
+	print 'winner' , st.goal()
+	input()
+
 if __name__ == '__main__':
 	test1()
 	test2()
+	ai_play()

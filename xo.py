@@ -11,7 +11,7 @@ class state(object):
 				raise Exception("bad"+str(v))						
 			self.v = v
 		
-	def score(self):		
+	def goal(self):		
 		line_indices = [[0,1,2],[3,4,5],[6,7,8],
 				 		[0,3,6],[1,4,7],[2,5,8],
 				 		[0,4,8],[2,4,6]]				
@@ -39,31 +39,54 @@ class state(object):
 		v = [d[c] for c in self.v]
 		return ''.join(v[0:3] + ['\n'] + v[3:6] + ['\n'] + v[6:9] + ['\n'])
 
-def test1():	
-	g1 = ('xxx' 
-		  ' oo' 
-		  'x  ')
+g1 = ('xxx' 
+	  ' oo' 
+	  'x  ')
 
-	g2 = ('0  '
-		  ' 00'
-		  'x 0')
+g2 = ('0  '
+	  ' 00'
+	  'x 0')
 
-	g3 = ('xx '
-		  ' oo'
-		  ' x ')
-	assert state(g1).score() == 1
-	assert state(g2).score() == -1
-	assert state(g3).score() == 0
+g3 = ('xx '
+	  ' oo'
+	  ' x ')
+
+g4 = ('x 0'
+	  'xx '
+	  ' 0 ')
+
+def test1():		
+	assert state(g1).goal() == 1
+	assert state(g2).goal() == -1
+	assert state(g3).goal() == 0
 	assert len(state(g1).expand()) == 3
 
-def search_min(state):	
-	if state.isfinal():
-		return state.score()
+def search_min(state):			
+	print state
+	isgoal = state.goal()
+	if isgoal:
+		return (isgoal, None)
 	else:		
-		return min(search_max(ch) for ch in state.expand())
+		children = state.expand()
+		scores = [search_max(c)[0] for c in children]
+		children_score = zip(scores, children)
+		return min(children_score, key=lambda x:x[0])		
 
-def search_max():
-	pass	
+def search_max(state):
+	print state
+	isgoal = state.goal()
+	if isgoal:
+		return (isgoal, None)
+	else:		
+		children = state.expand()
+		scores = [search_min(c)[0] for c in children]
+		children_score = zip(scores, children)
+		return max(children_score, key=lambda x:x[0])
+
+def test2():
+	st = state(g3,-1)	
+	print search_min(st)
 
 if __name__ == '__main__':
 	test1()
+	test2()

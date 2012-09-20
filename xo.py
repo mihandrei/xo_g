@@ -43,6 +43,40 @@ class state(object):
 		v = [d[c] for c in self.v]
 		return ''.join(v[0:3] + ['\n'] + v[3:6] + ['\n'] + v[6:9] + ['\n'])
 
+def minmax(state, side):
+	def snd (t):
+		return t[0]
+
+	goal = state.goal()
+	if goal is not None:
+		return (goal, None)
+	else:		
+		children = state.expand()		
+		scores = [minmax(c, -side)[0] for c in children]		
+		children_score = zip(scores, children)
+		if side == 1:
+			return max(children_score, key=snd)
+		else:
+			return min(children_score, key=snd)
+
+def ai_play():
+	def readmove():
+		m = input()
+		return m
+
+	st = state()
+
+	while st.goal() is None:
+		m = readmove()
+		st.v[m] = 1
+		st.tomove = -st.tomove
+		print st
+		g, st = minmax(st,-1)
+		print st
+
+	print 'winner' , st.goal()
+	input()
+
 g1 = ('xxx' 
 	  ' oo' 
 	  'x  ')
@@ -65,54 +99,16 @@ def test1():
 	assert state(g3).goal() == None
 	assert len(state(g1).expand()) == 3
 
-def search_min(state):				
-	goal = state.goal()
-	if goal is not None:
-		return (goal, None)
-	else:		
-		children = state.expand()
-		scores = [search_max(c)[0] for c in children]
-		children_score = zip(scores, children)
-		return min(children_score, key=lambda x:x[0])		
-
-def search_max(state):	
-	goal = state.goal()
-	if goal is not None:
-		return (goal, None)
-	else:		
-		children = state.expand()
-		scores = [search_min(c)[0] for c in children]
-		children_score = zip(scores, children)
-		return max(children_score, key=lambda x:x[0])
-
 def test2():
 	st = state(g3,1)		
-	g, nst = search_max(st)
+	g, nst = minmax(st,1)
 	assert g == 1
 	assert nst.v[6] == 1
 
 	st = state(g3, -1)	
-	g, nst = search_min(st)
+	g, nst = minmax(st,-1)
 	assert g == -1	
 	assert nst.v[3] == -1
-
-def ai_play():
-	def readmove():
-		m = input()
-		return m
-
-	st = state()
-
-	while st.goal() is None:
-		m = readmove()
-		st.v[m] = 1
-		st.tomove = -st.tomove
-		print st
-		g, st = search_min(st)
-		print st
-
-	print 'winner' , st.goal()
-	input()
 
 if __name__ == '__main__':
 	test1()

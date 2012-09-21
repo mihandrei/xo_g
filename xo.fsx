@@ -33,10 +33,21 @@ emptyBoard
 |> str_board 
 
 let goal (board:Board) =
-    let value_of_ray ray = [for c in ray -> board.[c]]              
-    let winning_ray =  value_of_ray >> fun a -> a = [X;X;X] || a = [O;O;O]
-    //sau fun a-> set [[X;X;X]; [O;O;O]] |> Set.contains a        
-    Seq.exists winning_ray rays
+    let value_of_ray ray = [for c in ray -> board.[c]]
+    
+    let winning_ray =  
+        value_of_ray >> fun a -> a = [X;X;X] || a = [O;O;O]
+        //sau fun a-> set [[X;X;X]; [O;O;O]] |> Set.contains a        
+
+    Seq.tryFind winning_ray rays
+    |> Option.map (fun ray -> board.[ray.Head], ray)
+    
+
+let expand (board:Board) = 
+    ()
+
+let minmax (board:Board) side = 
+    ()
 
 [X;E;X 
  E;X;E

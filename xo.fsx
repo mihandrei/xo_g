@@ -18,15 +18,12 @@ let board_of_list l : Board =
     let coords = List.concat rows    
     List.zip coords l |> Map.ofList
 
-let emptyBoard  = 
-    board_of_list (List.replicate (3*3) E)
+let emptyBoard  = board_of_list (List.replicate (3*3) E)
 
-let move c cell (board:Board)= 
-    board.Add (c , cell)
+let move c cell (board:Board) = board.Add (c , cell)
 
 let str_board (board:Board) =     
     let cellstr = function E -> "_" | O -> "0" | X -> "X"
-
     [for r in rows do
         yield [for c in r -> cellstr board.[c]] |> String.concat ""
     ] |> String.concat "\n" 
@@ -36,14 +33,9 @@ emptyBoard
 |> str_board 
 
 let goal (board:Board) =
-    let value_of_ray ray =
-        [for c in ray -> board.[c]]
-            
-    let winning_ray r = 
-        let vr = value_of_ray r
-        let h = List.head vr
-        h <> E && List.forall ( (=) h) vr
-
+    let value_of_ray ray = [for c in ray -> board.[c]]              
+    let winning_ray =  value_of_ray >> fun a -> a = [X;X;X] || a = [O;O;O]
+    //sau fun a-> set [[X;X;X]; [O;O;O]] |> Set.contains a        
     Seq.exists winning_ray rays
 
 [X;E;X 

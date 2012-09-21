@@ -1,8 +1,7 @@
 type Coord = int*int
-type Token = X|O
-type CellContent = Token option 
+type Cell  = X|O|E
 
-type Board = Map<Coord , CellContent>    
+type Board = Map<Coord , Cell>    
 
 //precompute all rays
 //as they are a few for this game
@@ -20,18 +19,35 @@ let board_of_list l : Board =
     List.zip coords l |> Map.ofList
 
 let emptyBoard  = 
-    board_of_list (List.replicate (3*3) None)
+    board_of_list (List.replicate (3*3) E)
 
 let move c cell (board:Board)= 
     board.Add (c , cell)
 
 let str_board (board:Board) =     
-    let cellstr = function None -> "_" | Some O -> "0" | Some X -> "X"
+    let cellstr = function E -> "_" | O -> "0" | X -> "X"
 
     [for r in rows do
         yield [for c in r -> cellstr board.[c]] |> String.concat ""
     ] |> String.concat "\n" 
-
+    
 emptyBoard
-|> move (1,1) (Some X)
+|> move (1,1) X
 |> str_board 
+
+let goal (board:Board) =
+    let value_of_ray ray =
+        [for c in ray -> board.[c]]
+            
+    let winning_ray r = 
+        let vr = value_of_ray r
+        let h = List.head vr
+        h <> E && List.forall ( (=) h) vr
+
+    Seq.exists winning_ray rays
+
+[X;E;X 
+ E;X;E
+ X;E;E;] 
+|> board_of_list 
+|> goal

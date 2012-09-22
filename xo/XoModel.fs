@@ -1,3 +1,5 @@
+module XoModel
+
 type Coord = int*int
 type Cell  = X|O|E
 

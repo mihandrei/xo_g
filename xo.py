@@ -1,4 +1,4 @@
-class state(object):		
+class state(object):	
 	def __init__(self, gamestr=None, tomove = 1):					
 		d = {'x': 1, '*':1, 'o': -1 , '0':-1, ' ':0, '_' :0}
 		self.tomove = tomove						
@@ -41,10 +41,10 @@ class state(object):
 	def __repr__(self):
 		d = ['_','X','0']
 		v = [d[c] for c in self.v]
-		return ''.join(v[0:3] + ['\n'] + v[3:6] + ['\n'] + v[6:9] + ['\n'])
+		return '\n'.join([' '.join(v[0:3]) , ' '.join(v[3:6]) , ' '.join(v[6:9])])
 
 def minmax(state, side):
-	def snd (t):
+	def fst (t):
 		return t[0]
 
 	goal = state.goal()
@@ -55,9 +55,9 @@ def minmax(state, side):
 		scores = [minmax(c, -side)[0] for c in children]		
 		children_score = zip(scores, children)
 		if side == 1:
-			return max(children_score, key=snd)
+			return max(children_score, key=fst)
 		else:
-			return min(children_score, key=snd)
+			return min(children_score, key=fst)
 
 def ai_play():
 	def readmove():
@@ -65,12 +65,13 @@ def ai_play():
 		return m
 
 	st = state()
-
+	print st
 	while st.goal() is None:
 		m = readmove()
 		st.v[m] = 1
 		st.tomove = -st.tomove
 		print st
+		print
 		g, st = minmax(st,-1)
 		print st
 
@@ -114,3 +115,4 @@ if __name__ == '__main__':
 	test1()
 	test2()
 	ai_play()
+	

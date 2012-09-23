@@ -3,13 +3,18 @@
 //unu rade unu plange si-altu zice c-ar bea sange
 open XoModel
 
-//let minmax side board = 
-//    if is_goal board 
-//    match evaluate board with 
-//    | Some g -> g
-//    | None ->  
-//        let children = board |> expand side 
-//        let scores = [for c in children -> minmax (-side) ]
-//    
+let rec minmax side board = 
+    board |> print_board
+    printfn ""
+    match evaluate board with 
+    | Some score -> score , board
+    | None ->  
+        let children = board |> expand side 
+        let scores = [for c in children -> minmax (opponent side) c]
+        match side with
+        |X-> List.maxBy fst scores
+        |O-> List.minBy fst scores
+        |E-> failwith "invalid side"
 
-
+let ai_move side board = 
+    minmax side board |> snd

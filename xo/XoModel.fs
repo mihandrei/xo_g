@@ -5,6 +5,8 @@ type Cell  = X|O|E
 
 type Board = Map<Coord , Cell>    
 
+let opponent = function X -> O | O -> X | E -> E
+
 //precompute all rays
 //as they are a few for this game
 //matlab style: rows = meshgrid(1..3 1..3)  columns = rows'; diags = toepl [1]; toepl[1]'
@@ -21,8 +23,6 @@ let board_of_list l : Board =
     List.zip coords l |> Map.ofList
 
 let emptyBoard  = board_of_list (List.replicate (3*3) E)
-
-let move c cell (board:Board) = board.Add (c , cell)
 
 let str_board (board:Board) =     
     let cellstr = function E -> "_" | O -> "0" | X -> "X"
@@ -53,12 +53,10 @@ let evaluate (board:Board) =
     |> function
         | Some r -> Some (eval_ray r)
         | None -> if is_blocked  then Some 0 else None 
-
     
-
 let expand cell (board:Board) : seq<Board> = 
     //rahat cand iterezi un Map nu primesti tuple ci KeyValuePair
     seq {for kw in board do
             if kw.Value=E then 
-                yield move kw.Key cell board
+                yield Map.add kw.Key cell board
         }

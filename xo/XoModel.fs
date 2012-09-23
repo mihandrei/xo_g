@@ -32,15 +32,28 @@ let str_board (board:Board) =
 
 let print_board = str_board >> printfn "%s"     
 
-let goal (board:Board) =
+let winning_ray (board:Board) =
     let value_of_ray ray = [for c in ray -> board.[c]]
     
-    let winning_ray =  
+    let is_winning_ray =  
         value_of_ray >> fun a -> a = [X;X;X] || a = [O;O;O]
         //sau fun a-> set [[X;X;X]; [O;O;O]] |> Set.contains a        
 
-    Seq.tryFind winning_ray rays
-    |> Option.map (fun ray -> board.[ray.Head], ray)
+    Seq.tryFind is_winning_ray rays
+
+let evaluate (board:Board) =
+    let eval_ray (h::_) = 
+        match board.[h] with 
+        | X -> 1 | O -> -1 
+
+    let is_blocked = 
+        not <| Map.exists (fun _ v -> v=E) board
+
+    winning_ray board 
+    |> function
+        | Some r -> Some (eval_ray r)
+        | None -> if is_blocked  then Some 0 else None 
+
     
 
 let expand cell (board:Board) : seq<Board> = 
@@ -49,23 +62,3 @@ let expand cell (board:Board) : seq<Board> =
             if kw.Value=E then 
                 yield move kw.Key cell board
         }
-
-let minmax (board:Board) side = 
-    ()
-
-//facut teste din astea
-emptyBoard
-|> move (1,1) X
-|> print_board 
-
-let b=
-    [X;E;X 
-     E;X;E
-     X;X;E;] 
-    |> board_of_list 
-
-b|> print_board
-
-b|> goal
-
-b|> expand O |> Seq.iter (fun x -> print_board x ; printfn "\n")

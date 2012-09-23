@@ -1,5 +1,4 @@
-﻿module test
-
+﻿#load "XoModel.fs"
 open XoModel
 
 //facut teste din astea
@@ -13,8 +12,11 @@ let b=
      X;X;E;] 
     |> board_of_list 
 
+b|> winning_ray
 b|> print_board
 
-b|> goal
+b|> evaluate
+
+emptyBoard |> goal
 
 b|> expand O |> Seq.iter (fun x -> print_board x ; printfn "\n")

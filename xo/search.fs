@@ -18,3 +18,6 @@ let rec minmax side board =
 
 let ai_move side board = 
     minmax side board |> snd
+
+let usr_move side c (board:Board) =
+    Map.add c side board
